@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>NCR Picklist CaWa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: irmã das páginas de aberturas/fechos/etiquetas (mesma estrutura em 3 passos), acento índigo das picklists NCR */
+:root {
+  --bg: #f3f4f7; --surface: #ffffff; --fg: #181c2a; --muted: #5d6478; --line: #d6d9e3;
+  --accent: #34489a; --accent-fg: #ffffff; --accent-soft: #e5e9f6;
+  --del: #a3402a; --del-soft: #f6e6e1;
+  --ok: #1f7a3d; --warn: #9a5800; --bad: #b3261e; --chip: #e9ebf2;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12141c; --surface: #1a1d28; --fg: #e4e7f0; --muted: #9da3b6; --line: #313649;
+  --accent: #98a9ec; --accent-fg: #10142a; --accent-soft: #232a47;
+  --del: #e2836b; --del-soft: #3a231c;
+  --ok: #6cc58a; --warn: #e2a54b; --bad: #f08b80; --chip: #262a3a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12141c; --surface: #1a1d28; --fg: #e4e7f0; --muted: #9da3b6; --line: #313649;
+  --accent: #98a9ec; --accent-fg: #10142a; --accent-soft: #232a47;
+  --del: #e2836b; --del-soft: #3a231c;
+  --ok: #6cc58a; --warn: #e2a54b; --bad: #f08b80; --chip: #262a3a; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; display: grid; gap: 20px; }
+header { display: grid; gap: 4px; }
+h1 { font-size: 1.6rem; font-weight: 600; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+header p { margin: 0; color: var(--muted); max-width: 72ch; }
+.mono { font-family: var(--font-mono); font-size: 0.86em; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@media (min-width: 980px) { .grid2 { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+section.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 14px; min-width: 0; align-content: start; }
+.step { display: flex; align-items: baseline; gap: 10px; }
+.step b { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); letter-spacing: 0.06em; }
+h2 { font-size: 1.05rem; margin: 0; font-weight: 600; }
+.hint { color: var(--muted); font-size: 0.86rem; margin: 0; }
+
+.drop { border: 1.5px dashed var(--line); border-radius: var(--r); padding: 18px; text-align: center; display: grid; gap: 8px; justify-items: center; transition: border-color .15s, background .15s; }
+.drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.files { display: grid; gap: 10px; }
+.ins-group { display: grid; gap: 6px; }
+.ins-group h3 { margin: 0; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--chip); border-radius: 4px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.76rem; }
+.chip.mod { outline: 1px solid var(--accent); }
+
+form { display: grid; gap: 14px; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+label.f { display: grid; gap: 4px; font-size: 0.86rem; font-weight: 500; }
+input[type=text], select {
+  font: inherit; font-size: 0.95rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 4px;
+  background: var(--bg); color: var(--fg); width: 100%; min-width: 0; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+fieldset { border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px 12px; margin: 0; min-width: 0; }
+legend { font-size: 0.8rem; color: var(--muted); padding: 0 4px; }
+
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg label { display: flex; gap: 7px; align-items: center; padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font-size: 0.88rem; cursor: pointer; }
+.seg label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.seg label.del:has(input:checked) { border-color: var(--del); background: var(--del-soft); }
+
+.apps { display: grid; gap: 6px; }
+.apps label { display: flex; gap: 7px; align-items: flex-start; font-size: 0.86rem; }
+.apps label > span { min-width: 0; overflow-wrap: anywhere; }
+.apps .k { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; }
+.apps .file { display: block; font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); }
+.apps .miss { color: var(--bad); font-size: 0.76rem; }
+label:has(input:disabled) { opacity: .6; }
+
+.jobs { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); overflow-wrap: anywhere; margin: 0; }
+.jobs b { color: var(--fg); font-weight: 500; }
+
+button { font: inherit; font-size: 0.92rem; font-weight: 500; border-radius: 4px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.actions .spacer { flex: 1; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.empty { color: var(--muted); text-align: center; padding: 18px; }
+td .x { border: 0; background: none; color: var(--bad); padding: 0 4px; }
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; padding: 1px 7px; border-radius: 3px; white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
+.pill.del { background: var(--del-soft); color: var(--del); }
+
+.confirm { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--accent); background: var(--accent-soft); border-radius: var(--r); }
+.confirm.del { border-color: var(--del); background: var(--del-soft); }
+.confirm p { margin: 0; white-space: pre-line; }
+.msg { padding: 9px 12px; border-radius: 4px; font-size: 0.88rem; border-left: 3px solid var(--muted); background: var(--bg); white-space: pre-line; }
+.msg.err { border-color: var(--bad); color: var(--bad); }
+.msg.ok { border-color: var(--ok); }
+.msg.warn { border-color: var(--warn); }
+pre.log { margin: 0; padding: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre; max-height: 420px; overflow-y: auto; }
+.log .add { color: var(--accent); } .log .rem { color: var(--del); } .log .skip { color: var(--muted); } .log .hd { font-weight: 500; } .log .warn { color: var(--warn); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>NCR Picklist CaWa</h1>
+    <p>Acrescenta ou retira lojas nas aplicações <span class="mono">MFT_FTPPUBLICO_NCR_PICKLIST</span> exportadas do CaWa: <span class="mono">CONFIG</span>, <span class="mono">IMAGES</span> e <span class="mono">REPORT</span>. Devolve um ZIP com os XML prontos a importar. Os ficheiros são processados neste browser e não são enviados para lado nenhum. Os XML originais ficam intactos no seu computador e servem de backup.</p>
+  </header>
+
+  <div class="grid2">
+    <section class="panel" aria-labelledby="s1">
+      <div class="step"><b>PASSO 1</b><h2 id="s1">XML exportados do CaWa</h2></div>
+      <p class="hint">Exporte as aplicações da insígnia (ex.: <span class="mono">MFT_FTPPUBLICO_NCR_PICKLIST_CONFIG_CBD</span>, <span class="mono">…_IMAGES_CBD</span>, <span class="mono">…_REPORT_CBD</span>) e carregue aqui os <span class="mono">.xml</span>. Pode carregar várias insígnias de uma vez.</p>
+      <div class="drop" id="drop">
+        <span>Arraste os ficheiros XML para aqui</span>
+        <span class="hint">ou</span>
+        <button type="button" id="pick">Escolher ficheiros…</button>
+        <input type="file" id="fileInput" accept=".xml" multiple hidden>
+      </div>
+      <div class="files" id="files"></div>
+      <div id="incMsg" hidden></div>
+      <div class="actions"><button type="button" id="clearFiles" hidden>Remover ficheiros carregados</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="s2">
+      <div class="step"><b>PASSO 2</b><h2 id="s2">Loja(s) e aplicações</h2></div>
+      <form id="form" novalidate>
+        <fieldset><legend>Ação</legend>
+          <div class="seg">
+            <label><input type="radio" name="acao" id="acao_add" value="add" checked> Acrescentar loja(s)</label>
+            <label class="del"><input type="radio" name="acao" id="acao_del" value="del"> Retirar loja(s)</label>
+          </div>
+        </fieldset>
+        <div class="row">
+          <label class="f" for="lojas">N.º loja(s)
+            <input type="text" id="lojas" placeholder="ex.: 7945  ou  7945, 8792 1234" autocomplete="off" inputmode="numeric">
+          </label>
+          <label class="f" for="insignia">Insígnia
+            <select id="insignia"></select>
+          </label>
+        </div>
+        <fieldset><legend>Aplicações</legend>
+          <div class="apps" id="apps"></div>
+        </fieldset>
+        <p class="jobs" id="jobsPreview"></p>
+        <div class="actions">
+          <span class="spacer"></span>
+          <button type="submit" class="primary">Adicionar à lista</button>
+        </div>
+        <div id="formMsg" hidden></div>
+      </form>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="s3">
+    <div class="step"><b>PASSO 3</b><h2 id="s3">Rever e gerar</h2></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Ação</th><th>Loja</th><th>Insígnia</th><th>Aplicações</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button type="button" id="clearList">Limpar lista</button>
+      <span class="spacer"></span>
+      <button type="button" id="preview">Pré-visualizar</button>
+      <button type="button" class="primary" id="generate">Gerar ZIP com os XML</button>
+    </div>
+    <div class="confirm" id="confirmBox" hidden>
+      <p id="confirmText"></p>
+      <div class="actions">
+        <button type="button" class="primary" id="confirmYes">Confirmar e descarregar ZIP</button>
+        <button type="button" id="confirmNo">Cancelar</button>
+      </div>
+    </div>
+    <div id="runMsg" hidden></div>
+    <pre class="log" id="log" hidden></pre>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// CORE-START  (mesma lógica de ncr_picklist_lojas.py -- ao mudar regras, mudar nos DOIS)
+const PREFIXO_FICHEIRO = "MFT_FTPPUBLICO_NCR_PICKLIST";
+const APLICACOES = [
+  ["CONFIG", "CONFIG_XML_PICKLIST_", "Envio de fx com info de ART para config do FTP"],
+  ["IMAGES", "IMAGES_PICKLIST_",     "Envio de fx com info de ART Imagens do FTP"],
+  ["REPORT", "DATA_XML_PICKLIST_",   "Envio de fx com info de ART report data do FTP"],
+];
+const APLICACAO = Object.fromEntries(APLICACOES.map(a => [a[0], a]));
+const TODAS = APLICACOES.map(a => a[0]);
+const ADD = "add", DEL = "del";
+
+const BLOCO_RE = () => /<(\w+) name="([^"]+)" qualifier="([^"]+)">[\s\S]*?<\/\1>/g;
+const SUCC_RE = () => /<successorname>\s*([^<]+?)\s*<\/successorname>/g;
+const RELCOND_RE = () => /<relcondition>[\s\S]*?<\/relcondition>/g;
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const p5 = n => String(n).padStart(5, "0");
+const semQual = s => s.replace(/\.[^.]*$/, "");
+const nomeXml = (chave, ins) => `${PREFIXO_FICHEIRO}_${chave}_${ins}.xml`;
+
+// Insígnias (sufixos) dos XML carregados. ficheiros: Map nomeEmMinúsculas -> {nome, xml}
+function insigniasCarregadas(ficheiros) {
+  const ins = new Set();
+  const re = new RegExp(`^${PREFIXO_FICHEIRO}_(${TODAS.join("|")})_(\\w+)\\.xml$`, "i");
+  for (const f of ficheiros.values()) { const m = re.exec(f.nome); if (m) ins.add(m[2].toUpperCase()); }
+  return [...ins].sort();
+}
+
+class AppXML {
+  constructor(nome, xml, chave) {
+    this.nome = nome; this.xml = xml; this.chave = chave; this.prefixo = APLICACAO[chave][1];
+    const m = xml.match(/<appl\b[^>]*\bname="([^"]+)"/);
+    if (!m) throw new Error(`não encontrei <appl name=...> em ${nome}`);
+    this.appl = m[1];
+    this.link = this.appl + "@Inicial";
+  }
+  blocos() {
+    const out = [];
+    for (const m of this.xml.matchAll(BLOCO_RE())) out.push({ tipo: m[1], nome: m[2], ini: m.index, fim: m.index + m[0].length });
+    return out;
+  }
+  bloco(nome) {
+    const m = new RegExp(`<(\\w+) name="${esc(nome)}" qualifier="[^"]+">[\\s\\S]*?<\\/\\1>`).exec(this.xml);
+    if (!m) throw new Error(`bloco '${nome}' não encontrado em ${this.appl}`);
+    return { texto: m[0], ini: m.index, fim: m.index + m[0].length };
+  }
+  // Map loja -> {nome, ini, fim} pela ordem do ficheiro
+  lojas() {
+    const rx = new RegExp(`^${esc(this.prefixo)}(\\d{5})$`);
+    const out = new Map();
+    for (const b of this.blocos()) {
+      const m = rx.exec(b.nome);
+      if (b.tipo === "unix_job" && m) out.set(parseInt(m[1], 10), { nome: b.nome, ini: b.ini, fim: b.fim });
+    }
+    return out;
+  }
+  // Loja mais recente (última no ficheiro) com estrutura normal e ligada ao @Inicial.
+  // Evita jobs com schedule próprio, 'request' (só a pedido) ou 'hold' (ex.: CBD 930).
+  escolherMolde() {
+    const ligadas = ligados(this);
+    for (const [loja, j] of [...this.lojas()].reverse()) {
+      const t = this.xml.slice(j.ini, j.fim);
+      if (ligadas.has(j.nome) && !t.includes("<schedules>") && !t.includes("<request>true</request>")
+          && !t.includes("<hold>true</hold>") && t.includes(`store:${loja}"`))
+        return { molde: loja, texto: t };
+    }
+    throw new Error(`${this.appl}: não há nenhuma loja normal para servir de molde`);
+  }
+}
+
+function trocarLoja(bloco, antiga, nova) {
+  bloco = bloco.split(`_${p5(antiga)}"`).join(`_${p5(nova)}"`);
+  bloco = bloco.split(`"store:${antiga}"`).join(`"store:${nova}"`);
+  if (bloco.includes(p5(antiga)) || bloco.includes(`store:${antiga}"`))
+    throw new Error(`ficou uma referência à loja molde ${antiga} no job clonado`);
+  return bloco;
+}
+
+function sucessor(rc) {
+  const s = SUCC_RE().exec(rc);
+  return s ? semQual(s[1]) : null;
+}
+
+function validarXml(app) {
+  if (typeof DOMParser === "undefined") return;
+  const doc = new DOMParser().parseFromString(app.xml, "application/xml");
+  if (doc.getElementsByTagName("parsererror").length) throw new Error(`${app.appl} ficou com XML inválido`);
+}
+
+function ligados(app) {
+  return new Set([...app.bloco(app.link).texto.matchAll(SUCC_RE())].map(s => semQual(s[1])));
+}
+
+function adicionarLojas(app, lojas) {
+  const { molde, texto: textoMolde } = app.escolherMolde();
+  const jobM = app.prefixo + p5(molde);
+  const rc = new RegExp(`<relcondition>\\s*<successorname>\\s*${esc(jobM)}\\.[^<]*</successorname>[\\s\\S]*?</relcondition>`).exec(app.bloco(app.link).texto);
+  if (!rc) throw new Error(`${app.appl}: ${jobM} não está ligado ao ${app.link}`);
+  const existentes = new Set(app.lojas().keys());
+  const linhas = [{ t: "hd", s: `${app.appl}  (molde: loja ${molde})` }], novas = [];
+  for (const loja of lojas) {
+    if (existentes.has(loja)) { linhas.push({ t: "skip", s: `   = loja ${loja} já existe -- ignorada` }); continue; }
+    const job = app.prefixo + p5(loja);
+    const fim = app.xml.lastIndexOf("</appl>");
+    app.xml = app.xml.slice(0, fim) + trocarLoja(textoMolde, molde, loja) + app.xml.slice(fim);
+    const b = app.bloco(app.link);
+    let t = b.texto;
+    const p = t.indexOf("</relconditionlist>");
+    t = t.slice(0, p) + rc[0].replace(jobM + ".", job + ".") + t.slice(p);
+    app.xml = app.xml.slice(0, b.ini) + t + app.xml.slice(b.fim);
+    existentes.add(loja);
+    novas.push(loja);
+    linhas.push({ t: "add", s: `   + loja ${loja}  [${job}]` });
+  }
+  if (novas.length) {
+    validarXml(app);
+    const nomes = new Map();
+    for (const b of app.blocos()) nomes.set(b.nome, (nomes.get(b.nome) || 0) + 1);
+    const lig = ligados(app);
+    for (const loja of novas) {
+      const job = app.prefixo + p5(loja);
+      if (nomes.get(job) !== 1) throw new Error(`${app.appl}: job ${job} aparece ${nomes.get(job) || 0} vezes`);
+      if (!lig.has(job)) throw new Error(`${app.appl}: ${job} não ficou ligado a ${app.link}`);
+    }
+  }
+  return { linhas, alteradas: novas };
+}
+
+function removerLojas(app, lojas) {
+  const linhas = [{ t: "hd", s: app.appl }], removidas = [], apagados = new Set();
+  for (const loja of lojas) {
+    const info = app.lojas().get(loja);
+    if (!info) { linhas.push({ t: "skip", s: `   = loja ${loja} não existe -- ignorada` }); continue; }
+    app.xml = app.xml.slice(0, info.ini) + app.xml.slice(info.fim);
+    const b = app.bloco(app.link);
+    const novo = b.texto.replace(RELCOND_RE(), r => sucessor(r) === info.nome ? "" : r);
+    app.xml = app.xml.slice(0, b.ini) + novo + app.xml.slice(b.fim);
+    apagados.add(info.nome);
+    removidas.push(loja);
+    linhas.push({ t: "rem", s: `   - loja ${loja}  [${info.nome}]` });
+  }
+  if (removidas.length) {
+    validarXml(app);
+    if (!app.bloco(app.link).texto.includes("<relcondition>"))
+      throw new Error(`${app.appl}: o ${app.link} ficaria sem nenhuma loja -- não permitido`);
+    const atuais = app.lojas();
+    const restos = removidas.filter(l => atuais.has(l) || app.xml.includes(`"store:${l}"`));
+    const pend = [...new Set([...app.xml.matchAll(SUCC_RE())].map(s => semQual(s[1])))].filter(n => apagados.has(n)).sort();
+    if (restos.length || pend.length)
+      throw new Error(`${app.appl}: ficaram restos das lojas ${restos.join(", ") || pend.join(", ")}`);
+  }
+  return { linhas, alteradas: removidas };
+}
+
+function ondeEsta(loja, ficheiros) {
+  const out = [];
+  for (const ins of insigniasCarregadas(ficheiros))
+    for (const k of TODAS) {
+      const f = ficheiros.get(nomeXml(k, ins).toLowerCase());
+      if (f && f.xml.includes(`name="${APLICACAO[k][1]}${p5(loja)}"`)) { out.push(ins); break; }
+    }
+  return out;
+}
+
+// Lojas que existem nalgumas aplicações da insígnia e noutras não (só aviso).
+function inconsistencias(ficheiros) {
+  const out = [];
+  for (const ins of insigniasCarregadas(ficheiros)) {
+    const porApp = new Map();
+    for (const k of TODAS) {
+      const f = ficheiros.get(nomeXml(k, ins).toLowerCase());
+      if (f) porApp.set(k, new Set(new AppXML(f.nome, f.xml, k).lojas().keys()));
+    }
+    const todas = new Set();
+    for (const s of porApp.values()) for (const l of s) todas.add(l);
+    for (const loja of [...todas].sort((a, b) => a - b)) {
+      const falta = [...porApp].filter(([, s]) => !s.has(loja)).map(([k]) => k);
+      if (falta.length) out.push(`${ins} loja ${loja}: não está em ${falta.join(", ")}`);
+    }
+  }
+  return out;
+}
+
+// pedidos: [{acao, loja, insignia, aplicacoes}]; ficheiros: Map nomeEmMinúsculas -> {nome, xml}
+function processar(pedidos, ficheiros) {
+  const grupos = new Map();
+  for (const p of pedidos) for (const k of p.aplicacoes) {
+    const chave = k + "|" + p.insignia;
+    if (!grupos.has(chave)) grupos.set(chave, { k, ins: p.insignia, ps: [] });
+    grupos.get(chave).ps.push([p.acao, p.loja]);
+  }
+  const carregado = n => ficheiros.has(n.toLowerCase());
+  const emFalta = [...new Set([...grupos.values()].filter(g => g.ps.some(([a]) => a === ADD) && !carregado(nomeXml(g.k, g.ins))).map(g => nomeXml(g.k, g.ins)))].sort();
+  if (emFalta.length)
+    throw new Error(`faltam ${emFalta.length} XML (exporte-os do CaWa e carregue-os no passo 1):\n  ` + emFalta.join("\n  "));
+
+  const linhas = [], avisos = [], naoVerif = [], resultados = [];
+  for (const g of grupos.values()) {
+    const n = nomeXml(g.k, g.ins);
+    if (!carregado(n)) { naoVerif.push(`${n} (lojas ${g.ps.map(([, l]) => l).join(", ")})`); continue; }
+    const f = ficheiros.get(n.toLowerCase());
+    const app = new AppXML(f.nome, f.xml, g.k);
+    let mudou = false;
+    // agrupa as lojas seguidas com a mesma ação (mantém a ordem dos pedidos)
+    const seguidos = [];
+    for (const [a, l] of g.ps) {
+      if (seguidos.length && seguidos[seguidos.length - 1][0] === a) seguidos[seguidos.length - 1][1].push(l);
+      else seguidos.push([a, [l]]);
+    }
+    for (const [acao, bloco] of seguidos) {
+      const r = acao === ADD ? adicionarLojas(app, bloco) : removerLojas(app, bloco);
+      if (acao === DEL)
+        for (const loja of bloco)
+          if (!r.alteradas.includes(loja)) {
+            const outras = ondeEsta(loja, ficheiros).filter(i => i !== g.ins);
+            if (outras.length) avisos.push(`loja ${loja} não está em ${g.ins} mas está em ${outras.join(", ")}`);
+          }
+      linhas.push(...r.linhas);
+      mudou = mudou || r.alteradas.length > 0;
+    }
+    if (mudou) resultados.push({ nome: app.nome, xml: app.xml });
+  }
+  if (naoVerif.length) { linhas.push({ t: "hd", s: "\nNÃO VERIFICADOS (XML em falta):" }); for (const x of naoVerif) linhas.push({ t: "warn", s: "   ? " + x }); }
+  const av = [...new Set(avisos)].sort();
+  if (av.length) { linhas.push({ t: "hd", s: "\nAVISOS" }); for (const a of av) linhas.push({ t: "warn", s: "   ! " + a }); }
+  return { linhas, resultados, avisos: av };
+}
+// CORE-END
+
+/* ---------------------------------------------------------------- UI */
+const $ = id => document.getElementById(id);
+const two = n => String(n).padStart(2, "0");
+const NOMES_ACAO = { add: "ACRESCENTAR", del: "RETIRAR" };
+const ficheiros = new Map();
+const modificados = new Set();
+let pedidos = [];
+let pendente = null;
+
+function msg(el, tipo, texto) {
+  el.hidden = !texto; el.className = "msg " + (tipo || ""); el.textContent = texto || "";
+}
+const acao = () => document.querySelector('input[name="acao"]:checked').value;
+const existe = k => !!$("insignia").value && ficheiros.has(nomeXml(k, $("insignia").value).toLowerCase());
+
+function insigniaDoFicheiro(nome) {
+  const m = nome.match(/_([A-Za-z]+)\.xml$/i);
+  return m ? m[1].toUpperCase() : "?";
+}
+
+function renderFicheiros() {
+  const box = $("files");
+  box.replaceChildren();
+  $("clearFiles").hidden = !ficheiros.size;
+  if (!ficheiros.size) {
+    const p = document.createElement("p"); p.className = "hint";
+    p.textContent = "Ainda não há XML carregados.";
+    box.append(p);
+  } else {
+    const grupos = {};
+    for (const f of ficheiros.values()) (grupos[insigniaDoFicheiro(f.nome)] ||= []).push(f.nome);
+    for (const ins of Object.keys(grupos).sort()) {
+      const g = document.createElement("div"); g.className = "ins-group";
+      const h = document.createElement("h3"); h.textContent = `${ins} · ${grupos[ins].length} XML`;
+      const c = document.createElement("div"); c.className = "chips";
+      for (const n of grupos[ins].sort()) {
+        const s = document.createElement("span");
+        s.className = "chip" + (modificados.has(n.toLowerCase()) ? " mod" : "");
+        s.title = modificados.has(n.toLowerCase()) ? "Já com as alterações do último ZIP gerado" : n;
+        s.textContent = n.replace(/^MFT_FTPPUBLICO_NCR_PICKLIST_/i, "").replace(/\.xml$/i, "");
+        c.append(s);
+      }
+      g.append(h, c); box.append(g);
+    }
+  }
+  let inc = [];
+  try { inc = inconsistencias(ficheiros); } catch (e) { inc = ["não consegui verificar: " + e.message]; }
+  msg($("incMsg"), "warn", inc.length ? "Lojas que não estão em todas as aplicações da insígnia:\n" + inc.join("\n") : "");
+  renderInsignias();
+}
+
+function renderInsignias() {
+  const sel = $("insignia"), atual = sel.value;
+  const lista = insigniasCarregadas(ficheiros);
+  sel.replaceChildren();
+  if (!lista.length) {
+    const o = document.createElement("option"); o.value = ""; o.textContent = "— carregue os XML no passo 1 —"; sel.append(o);
+  }
+  for (const ins of lista) { const o = document.createElement("option"); o.value = o.textContent = ins; sel.append(o); }
+  sel.value = lista.includes(atual) ? atual : (lista.includes("CBD") ? "CBD" : (lista[0] || ""));
+  if (sel.value !== atual) mudouInsignia(); else atualizarEstado();
+}
+
+async function carregar(lista) {
+  const xs = [...lista].filter(f => /\.xml$/i.test(f.name));
+  for (const f of xs) {
+    ficheiros.set(f.name.toLowerCase(), { nome: f.name, xml: await f.text() });
+    modificados.delete(f.name.toLowerCase());
+  }
+  if (lista.length && !xs.length) msg($("runMsg"), "warn", "Só são aceites ficheiros .xml.");
+  renderFicheiros();
+}
+
+function construirApps() {
+  for (const [k, prefixo, desc] of APLICACOES) {
+    const l = document.createElement("label");
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.id = "ap_" + k; cb.value = k;
+    const t = document.createElement("span");
+    const kk = document.createElement("span"); kk.className = "k"; kk.textContent = k;
+    const miss = document.createElement("span"); miss.className = "miss"; miss.id = "miss_" + k;
+    const file = document.createElement("span"); file.className = "file"; file.id = "file_" + k;
+    t.append(kk, ` – ${desc} → ${prefixo}<loja> `, miss, file);
+    l.append(cb, t);
+    $("apps").append(l);
+    cb.addEventListener("change", renderJobs);
+  }
+}
+
+function atualizarEstado() {
+  const ins = $("insignia").value;
+  for (const k of TODAS) {
+    $("miss_" + k).textContent = ins && !existe(k) ? "(XML em falta)" : "";
+    $("file_" + k).textContent = nomeXml(k, ins || "?");
+  }
+  renderJobs();
+}
+
+function mudouInsignia() {
+  for (const k of TODAS) $("ap_" + k).checked = existe(k);
+  atualizarEstado();
+}
+
+// Nomes dos jobs da 1.ª loja escrita, para conferir.
+function renderJobs() {
+  const p = $("jobsPreview"); p.replaceChildren();
+  const t = $("lojas").value.trim().split(/[\s,;]+/)[0];
+  if (!/^\d{1,5}$/.test(t || "") || +t === 0) return;
+  const partes = APLICACOES.filter(([k]) => $("ap_" + k).checked).map(([, pref]) => pref + p5(+t));
+  if (!partes.length) return;
+  const b = document.createElement("b");
+  b.textContent = acao() === ADD ? "Jobs a criar: " : "Jobs a apagar: ";
+  p.append(b, partes.join(" · ") + `  (store:${+t})`);
+}
+
+function renderLista() {
+  const tb = $("tbody");
+  tb.replaceChildren();
+  if (!pedidos.length) {
+    const tr = document.createElement("tr"); const td = document.createElement("td");
+    td.colSpan = 5; td.className = "empty";
+    td.textContent = "Lista vazia. Indique a ação, a(s) loja(s) e a insígnia no passo 2 e clique em “Adicionar à lista”.";
+    tr.append(td); tb.append(tr); return;
+  }
+  pedidos.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    const tdA = document.createElement("td");
+    const pill = document.createElement("span"); pill.className = "pill" + (p.acao === ADD ? "" : " del"); pill.textContent = NOMES_ACAO[p.acao];
+    tdA.append(pill); tr.append(tdA);
+    [p.loja, p.insignia, p.aplicacoes.join(", ")].forEach((v, j) => { const td = document.createElement("td"); td.textContent = v; if (j === 2) td.className = "mono"; tr.append(td); });
+    const td = document.createElement("td");
+    const b = document.createElement("button"); b.type = "button"; b.className = "x"; b.textContent = "Remover";
+    b.setAttribute("aria-label", `Remover loja ${p.loja} da lista`);
+    b.onclick = () => { pedidos.splice(i, 1); fecharConfirmacao(); renderLista(); };
+    td.append(b); tr.append(td); tb.append(tr);
+  });
+}
+
+function adicionar(ev) {
+  ev.preventDefault();
+  const fm = $("formMsg"), a = acao();
+  try {
+    const toks = $("lojas").value.trim().split(/[\s,;]+/).filter(Boolean);
+    if (!toks.length) throw new Error("Indique pelo menos um n.º de loja.");
+    const lojas = [];
+    for (const t of toks) {
+      if (!/^\d+$/.test(t) || +t <= 0 || +t > 99999) throw new Error(`N.º de loja inválido: “${t}”.`);
+      if (!lojas.includes(+t)) lojas.push(+t);
+    }
+    const ins = $("insignia").value;
+    if (!ins) throw new Error("Carregue primeiro os XML da insígnia no passo 1.");
+    const aplicacoes = TODAS.filter(k => $("ap_" + k).checked);
+    if (!aplicacoes.length) throw new Error("Selecione pelo menos uma aplicação.");
+    const repetidas = [];
+    for (const loja of lojas) {
+      if (pedidos.some(p => p.loja === loja && p.insignia === ins && p.acao === a)) { repetidas.push(loja); continue; }
+      pedidos.push({ acao: a, loja, insignia: ins, aplicacoes });
+    }
+    msg(fm, repetidas.length ? "warn" : "ok", repetidas.length
+      ? `Loja(s) ${repetidas.join(", ")} já estavam na lista.`
+      : `Adicionado(s) ${lojas.length} pedido(s) à lista.`);
+    $("lojas").value = "";
+    $("lojas").focus();
+    renderJobs();
+    fecharConfirmacao();
+    renderLista();
+  } catch (e) { msg(fm, "err", e.message); }
+}
+
+function mostrarLog(linhas, rodape) {
+  const log = $("log");
+  log.replaceChildren();
+  for (const l of linhas) { const s = document.createElement("span"); s.className = l.t; s.textContent = l.s + "\n"; log.append(s); }
+  if (rodape) log.append("\n" + rodape);
+  log.hidden = false;
+}
+
+function relatorioTexto(linhas, resultados) {
+  return [
+    `NCR Picklist CaWa — ${new Date().toLocaleString("pt-PT")}`,
+    "",
+    "Pedidos:",
+    ...pedidos.map(p => `  ${NOMES_ACAO[p.acao]} ${p.loja} ${p.insignia} | ${p.aplicacoes.join(", ")}`),
+    "",
+    ...linhas.map(l => l.s),
+    "",
+    `XML alterados (${resultados.length}):`,
+    ...resultados.map(r => "  " + r.nome),
+    "",
+  ].join("\r\n");
+}
+
+function correr() {
+  const rm = $("runMsg");
+  if (!pedidos.length) { msg(rm, "warn", "A lista está vazia: adicione pelo menos uma loja no passo 2."); return null; }
+  try {
+    return processar(pedidos, ficheiros);
+  } catch (e) {
+    msg(rm, "err", e.message + "\nNada foi gerado.");
+    $("log").hidden = true;
+    return null;
+  }
+}
+
+function fecharConfirmacao() { pendente = null; $("confirmBox").hidden = true; }
+
+$("preview").onclick = () => {
+  fecharConfirmacao();
+  const r = correr(); if (!r) return;
+  mostrarLog(r.linhas, r.resultados.length ? `PRÉ-VISUALIZAÇÃO: ${r.resultados.length} XML seriam alterados.` : "Nada a alterar.");
+  msg($("runMsg"), r.resultados.length ? (r.avisos.length ? "warn" : "ok") : "warn",
+    r.resultados.length ? `Pré-visualização pronta. Nada foi gerado ainda.${r.avisos.length ? ` Há ${r.avisos.length} aviso(s) no fim do relatório.` : ""}`
+      : "Nada a alterar: as lojas já estão como pedido nos XML carregados.");
+};
+
+// 1.º clique: pré-visualiza e pede confirmação na própria página
+$("generate").onclick = () => {
+  const r = correr(); if (!r) { fecharConfirmacao(); return; }
+  if (!r.resultados.length) { fecharConfirmacao(); mostrarLog(r.linhas, "Nada a alterar."); msg($("runMsg"), "warn", "Nada a alterar: as lojas já estão como pedido nos XML carregados."); return; }
+  mostrarLog(r.linhas, `A gerar: ${r.resultados.length} XML alterados.`);
+  msg($("runMsg"), "", "");
+  pendente = r;
+  const linhas = [];
+  for (const [a, texto] of [[ADD, "Acrescentar"], [DEL, "RETIRAR"]]) {
+    const ls = pedidos.filter(p => p.acao === a).map(p => `${p.loja} (${p.insignia})`);
+    if (ls.length) linhas.push(`${texto} ${ls.join(", ")}`);
+  }
+  const apaga = pedidos.some(p => p.acao === DEL);
+  $("confirmBox").className = "confirm" + (apaga ? " del" : "");
+  $("confirmText").textContent = `${linhas.join("\n")}\nem ${r.resultados.length} XML.` +
+    (r.avisos.length ? ` Reveja os ${r.avisos.length} aviso(s) no relatório abaixo.` : "") + " Confirma?";
+  $("confirmBox").hidden = false;
+  $("confirmYes").focus();
+};
+$("confirmNo").onclick = () => { fecharConfirmacao(); msg($("runMsg"), "", "Cancelado. Nada foi gerado."); };
+
+$("confirmYes").onclick = async () => {
+  const r = pendente; if (!r) return;
+  const rm = $("runMsg");
+  // No claude.ai usa a capability "downloads"; noutro alojamento (ex.: GitHub Pages) usa a descarga normal do browser.
+  const dentroClaude = typeof window.claude?.use === "function";
+  const downloads = dentroClaude ? await window.claude.use("downloads") : null;
+  if (dentroClaude && !downloads) { fecharConfirmacao(); msg(rm, "err", "Esta vista não permite descarregar ficheiros. Abra a página no claude.ai com sessão iniciada."); return; }
+  const btn = $("confirmYes"); btn.disabled = true;
+  try {
+    const zip = new JSZip();
+    for (const f of r.resultados) zip.file(f.nome, f.xml);
+    zip.file("relatorio_ncr_picklist.txt", relatorioTexto(r.linhas, r.resultados));
+    const blob = await zip.generateAsync({ type: "blob", compression: "DEFLATE" });
+    const d = new Date();
+    const stamp = `${d.getFullYear()}${two(d.getMonth() + 1)}${two(d.getDate())}_${two(d.getHours())}${two(d.getMinutes())}`;
+    const filename = `ncr_picklist_${[...new Set(pedidos.map(p => p.loja))].join("-").slice(0, 60)}_${stamp}.zip`;
+    if (downloads) {
+      await downloads.save({ filename, data: blob });
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; a.hidden = true;
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    }
+    for (const f of r.resultados) { ficheiros.set(f.nome.toLowerCase(), { nome: f.nome, xml: f.xml }); modificados.add(f.nome.toLowerCase()); }
+    mostrarLog(r.linhas, `ZIP gerado com ${r.resultados.length} XML + relatorio_ncr_picklist.txt.`);
+    msg(rm, "ok", `ZIP descarregado com ${r.resultados.length} XML. Importe-os no CaWa. Os XML carregados nesta página já têm estas alterações.`);
+    pedidos = []; renderLista(); renderFicheiros();
+  } catch (e) {
+    const t = { declined: "Descarga cancelada. Nada foi guardado.", rate_limited: "Já há um pedido de descarga aberto. Tente de novo dentro de momentos." }[e?.code];
+    msg(rm, "err", t || ("Não foi possível gerar o ZIP: " + (e?.message || e)));
+  } finally { btn.disabled = false; fecharConfirmacao(); }
+};
+
+$("clearList").onclick = () => { pedidos = []; fecharConfirmacao(); renderLista(); msg($("runMsg"), "", ""); $("log").hidden = true; };
+$("clearFiles").onclick = () => { ficheiros.clear(); modificados.clear(); fecharConfirmacao(); renderFicheiros(); };
+$("pick").onclick = () => $("fileInput").click();
+$("fileInput").onchange = e => { carregar(e.target.files); e.target.value = ""; };
+const drop = $("drop");
+drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", e => { e.preventDefault(); drop.classList.remove("over"); carregar(e.dataTransfer.files); });
+document.addEventListener("dragover", e => e.preventDefault());
+document.addEventListener("drop", e => e.preventDefault());
+
+$("insignia").onchange = mudouInsignia;
+for (const r of document.querySelectorAll('input[name="acao"]')) r.addEventListener("change", () => { fecharConfirmacao(); renderJobs(); });
+$("lojas").addEventListener("input", renderJobs);
+$("form").addEventListener("submit", adicionar);
+construirApps();
+renderFicheiros(); renderLista();
+</script>
+
+</body>
+</html>
